@@ -1,24 +1,27 @@
-import React, { useRef } from "react";
+import React, { useRef, useContext } from "react";
 import { useDrag, useDrop } from "react-dnd";
 
 import BoardContext from "../Board/context";
 
 import { Container, Label } from "./styles";
 
-function Card({ data, index }) {
+export default function Card({ data, index, listIndex }) {
   const ref = useRef();
   const { move } = useContext(BoardContext);
 
   const [{ isDragging }, dragRef] = useDrag({
-    item: { type: "CARD", index },
+    item: { type: "CARD", index, listIndex },
     collect: (monitor) => ({
-      isDragging: monitor.isDragging,
+      isDragging: monitor.isDragging(),
     }),
   });
 
-  const [, dragRef] = useDrop({
+  const [, dropRef] = useDrop({
     accept: "CARD",
     hover(item, monitor) {
+      const draggedListIndex = item.listIndex;
+      const targetListIndex = listIndex;
+
       const draggedIndex = item.index;
       const targetIndex = index;
 
@@ -43,8 +46,10 @@ function Card({ data, index }) {
         return;
       }
 
-      move(draggedIndex, targetIndex);
+      move(draggedListIndex, targetListIndex, draggedIndex, targetIndex);
 
+      item.index = targetIndex;
+      item.listIndex = targetListIndex;
     },
   });
 
@@ -56,12 +61,9 @@ function Card({ data, index }) {
         {data.labels.map((label) => (
           <Label key={label} color={label} />
         ))}
-        <Label color="#7159c1"></Label>
       </header>
       <p>{data.content}</p>
       {data.user && <img src={data.user} alt="" />}
     </Container>
   );
 }
-
-export default Card;

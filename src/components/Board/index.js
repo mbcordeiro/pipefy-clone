@@ -1,14 +1,17 @@
 import React, { useState } from "react";
+import produce from "immer";
 
 import { loadLists } from "../../services/api";
+
 import BoardContext from "./context";
 
-import { List } from "../List";
+import List from "../List";
+
 import { Container } from "./styles";
 
 const data = loadLists();
 
-function Board() {
+export default function Board() {
   const [lists, setLists] = useState(data);
 
   function move(fromList, toList, from, to) {
@@ -32,5 +35,3 @@ function Board() {
     </BoardContext.Provider>
   );
 }
-
-export default Board;
