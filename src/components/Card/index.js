@@ -1,15 +1,25 @@
 import React from "react";
+import { useDrag } from "react-dnd";
 
 import { Container, Label } from "./styles";
 
-function Card() {
+function Card({ data }) {
+  const [{ isDragging }, dragRef] = useDrag({
+    item: {type: 'CARD'},
+    collect: (monitor) => ({
+      isDragging: monitor.isDragging,
+    }),
+  });
   return (
-    <Container>
+    <Container ref={dragRef} isDragging={isDragging}>
       <header>
+        {data.labels.map((label) => (
+          <Label key={label} color={label} />
+        ))}
         <Label color="#7159c1"></Label>
       </header>
-      <p>Realizar tarefa</p>
-      <img src="https://avatars3.githubusercontent.com/u/55818513?s=460&u=20b00b19981de2d48883d8ad159db9db2ad06f4a&v=4" alt="Avatar" />
+      <p>{data.content}</p>
+      {data.user && <img src={data.user} alt="" />}
     </Container>
   );
 }
